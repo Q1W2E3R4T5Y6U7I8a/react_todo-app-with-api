@@ -1,33 +1,21 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React, {
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import cn from 'classnames';
 import { UserWarning } from './UserWarning';
 import { TodoList } from './Components/TodoList';
-import {
-  Actions,
-  DispatchContext,
-  StateContext,
-} from './Components/Store';
+import { Actions, DispatchContext, StateContext } from './Components/Store';
 import { TodosType } from './enums/TodosType';
 import { Todo } from './types/Todo';
 import { Header } from './Components/Header';
 import { Footer } from './Components/Footer';
 
 export const App: React.FC = () => {
-  const ErrorClases = 'notification is-danger '
-    + 'is-light has-text-weight-normal';
+  const ErrorClases =
+    'notification is-danger ' + 'is-light has-text-weight-normal';
   const USER_ID = 12123;
 
   const dispatch = useContext(DispatchContext);
-  const {
-    allTodos,
-    error,
-  } = useContext(StateContext);
+  const { allTodos, error } = useContext(StateContext);
 
   const activeTodos = useMemo(() => {
     return allTodos?.filter(todo => !todo.completed) || [];
@@ -62,9 +50,9 @@ export const App: React.FC = () => {
   const visibleTodos = useMemo(() => {
     switch (visibleTodosType) {
       case TodosType.active:
-        return allTodos.filter(todo => !todo.completed) || [];
+        return allTodos.filter(todo => !todo.completed);
       case TodosType.completed:
-        return allTodos.filter(todo => todo.completed) || [];
+        return allTodos.filter(todo => todo.completed);
       default:
         return allTodos;
     }

@@ -7,9 +7,8 @@ import './styles/index.scss';
 import { App } from './App';
 import { GlobalStateProvider } from './Components/Store/Store';
 
-createRoot(document.getElementById('root') as HTMLDivElement)
-  .render(
-    <GlobalStateProvider>
-      <App />
-    </GlobalStateProvider>,
-  );
+createRoot(document.getElementById('root') as HTMLDivElement).render(
+  <GlobalStateProvider>
+    <App />
+  </GlobalStateProvider>,
+);

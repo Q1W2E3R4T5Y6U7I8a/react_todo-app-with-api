@@ -1,5 +1,5 @@
 export enum TodosType {
-    all = 'All',
-    active = 'Active',
-    completed = 'Completed',
-  }
+  all = 'All',
+  active = 'Active',
+  completed = 'Completed',
+}

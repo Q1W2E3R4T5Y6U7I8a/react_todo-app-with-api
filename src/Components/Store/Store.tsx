@@ -20,21 +20,22 @@ export enum Keys {
   Enter = 'Enter',
 }
 
-type Action = { type: Actions.addNew, todo: Todo }
-| { type: Actions.mark, todo: Todo }
-| { type: Actions.destroy, todo: Todo }
-| { type: Actions.edit, todo: Todo }
-| { type: Actions.destroyCompleted }
-| { type: Actions.setNewUserId, userId: number }
-| { type: Actions.setUserTodos, todos: Todo[] }
-| { type: Actions.setLoadingError }
-| { type: Actions.setDeletingError }
-| { type: Actions.setUpdatingError };
+type Action =
+  | { type: Actions.addNew; todo: Todo }
+  | { type: Actions.mark; todo: Todo }
+  | { type: Actions.destroy; todo: Todo }
+  | { type: Actions.edit; todo: Todo }
+  | { type: Actions.destroyCompleted }
+  | { type: Actions.setNewUserId; userId: number }
+  | { type: Actions.setUserTodos; todos: Todo[] }
+  | { type: Actions.setLoadingError }
+  | { type: Actions.setDeletingError }
+  | { type: Actions.setUpdatingError };
 
 interface State {
-  userId: number,
-  allTodos: Todo[],
-  error: string,
+  userId: number;
+  allTodos: Todo[];
+  error: string;
 }
 
 function saveTodos(state: State, updatedTodos: Todo[]) {
@@ -48,10 +49,14 @@ function reducer(state: State, action: Action): State {
   switch (action.type) {
     case Actions.mark: {
       const updatedTodos = state.allTodos.map((todo: Todo) => {
-        return (todo.id === action.todo.id ? {
-          ...todo,
-          completed: !action.todo.completed,
-        } : todo);
+        if (todo.id === action.todo.id) {
+          return {
+            ...todo,
+            completed: !action.todo.completed,
+          };
+        } else {
+          return todo;
+        }
       });
 
       return saveTodos(state, updatedTodos);
@@ -64,24 +69,35 @@ function reducer(state: State, action: Action): State {
     }
 
     case Actions.destroy: {
-      const updatedTodos = state.allTodos.filter((todo) => {
-        return (action.todo.id !== todo.id);
+      const updatedTodos = state.allTodos.filter(todo => {
+        return action.todo.id !== todo.id;
       });
 
       return saveTodos(state, updatedTodos);
     }
 
     case Actions.edit: {
-      const index = state.allTodos.findIndex(todo => {
-        return todo.id === action.todo.id;
+      const updatedTodos = state.allTodos.map(todo => {
+        if (todo.id === action.todo.id) {
+          return {
+            ...todo,
+            completed: !action.todo.completed,
+          };
+        } else {
+          return todo;
+        }
       });
 
-      const updatedTodos = state.allTodos.map((todo, todoIndex) => {
-        return (todoIndex === index ? {
+      /*
+      if (todo.id === action.todo.id) {
+        return {
           ...todo,
-          title: action.todo.title,
-        } : todo);
-      });
+          completed: !action.todo.completed,
+        };
+      } else {
+        return todo;
+      }
+      */
 
       return saveTodos(state, updatedTodos);
     }
@@ -131,11 +147,11 @@ const initialState: State = {
 
 export const StateContext = React.createContext(initialState);
 export const DispatchContext = React.createContext<React.Dispatch<Action>>(
-  () => { },
+  () => {},
 );
 
 interface Props {
-  children: React.ReactNode,
+  children: React.ReactNode;
 }
 
 export const GlobalStateProvider: React.FC<Props> = ({ children }) => {
@@ -143,24 +159,24 @@ export const GlobalStateProvider: React.FC<Props> = ({ children }) => {
 
   useEffect(() => {
     if (state.userId) {
-      getTodos(state.userId).then(todos => {
-        dispatch({
-          type: Actions.setUserTodos,
-          todos,
+      getTodos(state.userId)
+        .then(todos => {
+          dispatch({
+            type: Actions.setUserTodos,
+            todos,
+          });
+        })
+        .catch(() => {
+          dispatch({
+            type: Actions.setLoadingError,
+          });
         });
-      }).catch(() => {
-        dispatch({
-          type: Actions.setLoadingError,
-        });
-      });
     }
   }, [state.userId]);
 
   return (
     <DispatchContext.Provider value={dispatch}>
-      <StateContext.Provider value={state}>
-        {children}
-      </StateContext.Provider>
+      <StateContext.Provider value={state}>{children}</StateContext.Provider>
     </DispatchContext.Provider>
   );
 };
