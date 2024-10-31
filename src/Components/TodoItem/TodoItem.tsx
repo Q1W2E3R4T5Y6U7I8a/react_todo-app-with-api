@@ -127,6 +127,7 @@ export const TodoItem: React.FC<Props> = ({ todo, loaderActive }) => {
         completed: todo.completed,
       })}
       onDoubleClick={handleDoubleClick}
+      style={{ cursor: isUpdating || loaderActive ? 'wait' : 'auto' }}
     >
       <label className="todo__status-label">
         <input

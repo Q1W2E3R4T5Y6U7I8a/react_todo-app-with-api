@@ -14,6 +14,7 @@ export const App: React.FC = () => {
     'notification is-danger ' + 'is-light has-text-weight-normal';
   const USER_ID = 12123;
 
+  const [loadingTodos] = useState<number[]>([]);
   const dispatch = useContext(DispatchContext);
   const { allTodos, error } = useContext(StateContext);
 
@@ -78,7 +79,7 @@ export const App: React.FC = () => {
           setTempTodo={setTempTodo}
         />
 
-        <TodoList todos={visibleTodos} tempTodo={tempTodo} />
+        <TodoList todos={visibleTodos} tempTodo={tempTodo} loadingTodos={loadingTodos}/>
 
         {!!allTodos.length && (
           <Footer
