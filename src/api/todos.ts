@@ -1,20 +1,26 @@
-import { Todo } from '../types/Todo';
 import { client } from '../utils/fetchClient';
+import { Todo } from '../components/todo.component/todo.types';
 
-export const getTodos = (userId: number) => {
-  return client.get<Todo[]>(`/todos?userId=${userId}`);
+export const USER_ID = 628;
+
+export const getTodos = () => {
+  return client.get<Todo[]>(`/todos?userId=${USER_ID}`);
 };
 
-export const deleteData = (todoId: number) => {
-  return client.delete(`/todos/${todoId}`);
+export const createTodo = (
+  title: string,
+  userId: number,
+  completed = false,
+): Promise<Todo> => {
+  const data = { title, userId, completed };
+
+  return client.post<Todo>('/todos', data);
 };
 
-export const createTodo = ({ title, userId, completed }: Omit<Todo, 'id'>) => {
-  return client.post<Todo>('/todos', { title, userId, completed });
+export const deleteTodo = (todoId: number) => {
+  return client.delete(`/todos/${todoId}`) as Promise<number>;
 };
 
-type UpdateTodoInput = Partial<Omit<Todo, 'userId'>>;
-
-export const updateTodo = ({ id, completed, title }: UpdateTodoInput) => {
-  return client.patch<Todo>(`/todos/${id}`, { completed, title });
+export const updateTodo = (todoId: number, data: Partial<Todo>) => {
+  return client.patch(`/todos/${todoId}`, data) as Promise<Todo>;
 };
